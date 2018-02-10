@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -82,11 +84,6 @@ namespace SinjulMSBH_Upload_Web.Controllers
 
 		public IActionResult Upload02 ( ) => View( );
 
-		//public JsonResult UploadFile ( IList<IFormFile> files )
-		//{
-		//	return Json( new { state = 0 , message = string.Empty } );
-		//}
-
 		public IActionResult IFrame ( ) => View( );
 
 		public IActionResult Upload03 ( ) => View( );
@@ -108,5 +105,75 @@ namespace SinjulMSBH_Upload_Web.Controllers
 
 			return this.View( nameof( Uploaded ) );
 		}
+
+		public IActionResult Upload04 ( ) => View( );
+
+		[HttpPost]
+		public async Task<JsonResult> UploadFile ( )
+		{
+			try
+			{
+				foreach ( IFormFile source in Request.Form.Files )
+				{
+					string filename = ContentDispositionHeaderValue.Parse(source.ContentDisposition).FileName.ToString().Trim('"');
+
+					filename = this.EnsureCorrectFilename( filename );
+
+					using ( FileStream output = System.IO.File.Create( this.GetPathAndFilename( filename ) ) )
+						await source.CopyToAsync( output );
+				}
+			}
+			catch ( Exception )
+			{
+				Response.StatusCode = ( int ) HttpStatusCode.BadRequest;
+				return Json( "Upload failed" );
+			}
+
+			return Json( "File uploaded successfully" );
+		}
+
+		//Upload Large File
+
+		//public JsonResult UploadFile ( IList<IFormFile> files )
+		//{
+		//	return Json( new { state = 0 , message = string.Empty } );
+		//}
+
+		//[HttpPost]
+		//public IActionResult Upload ( List<IFormFile> files )
+		//{
+		//	//Do something with the files here.
+		//	return Ok( );
+		//}
+
+		//[HttpPost]
+		//[DisableFormValueModelBinding]
+		//public async Task<IActionResult> Index ( )
+		//{
+		//	FormValueProvider formModel;
+		//	using ( var stream = System.IO.File.Create( "c:\\temp\\myfile.temp" ) )
+		//	{
+		//		formModel = await Request.StreamFile( stream );
+		//	}
+
+		//	var viewModel = new MyViewModel();
+
+		//	var bindingSuccessful = await TryUpdateModelAsync(viewModel, prefix: "",valueProvider: formModel);
+
+		//	if ( !bindingSuccessful )
+		//	{
+		//		if ( !ModelState.IsValid )
+		//		{
+		//			return BadRequest( ModelState );
+		//		}
+		//	}
+
+		//	return Ok( viewModel );
+		//}
+
+		//public class MyViewModel
+		//{
+		//	public string Username { get; set; }
+		//}
 	}
 }
