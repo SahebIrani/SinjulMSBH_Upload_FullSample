@@ -1,0 +1,15 @@
+﻿<br />
+<br />
+<meta charset="utf-8" />
+<title>@Html.Raw( this.ViewBag.Title as string )</title>
+<link href="http://fonts.googleapis.com/css?family=Open+Sans:400&subset=latin,cyrillic" type="text/css" rel="stylesheet" />
+<link href="~/css/iframe.css" rel="stylesheet" />
+<script src="~/js/iframe.js"></script>
+<form id="form" name="form" action="/uploader/Index2" enctype="multipart/form-data" method="post">
+      <div class="buttons">
+            <div class="upload-button">
+                  <div class="label">Click me!</div>
+                  <input name="files" type="file" size="1" multiple onchange="submitForm('form');" />
+            </div>
+      </div>
+</form>
